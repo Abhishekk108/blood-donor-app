@@ -1,0 +1,261 @@
+.home-navbar {
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 100%);
+  padding: 12px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100vw;
+  height: 5rem;
+  font-size: 2rem;
+  box-shadow: 0 4px 12px rgba(255, 10, 10, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left h4 {
+  margin: 0;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.8rem;
+}
+
+.nav-left i {
+  color: #b30000;
+  font-size: 2rem;
+}
+
+.tagline {
+  font-size: 11px;
+  color: #555;
+  margin-left: 32px;
+  margin-top: -4px;
+  display: block;
+  font-weight: 500;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #222;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-item i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-item:hover {
+  color: #fff;
+  background-color: rgba(179, 0, 0, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(179, 0, 0, 0.3);
+}
+
+.nav-item:hover i {
+  transform: scale(1.2);
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #b30000;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-logout {
+  background: linear-gradient(135deg, #b30000, #ff0a0a);
+  color: white !important;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(179, 0, 0, 0.2);
+}
+
+.btn-logout:hover {
+  background: linear-gradient(135deg, #8b0000, #cc0808);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(179, 0, 0, 0.4);
+  color: white !important;
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.3);
+}
+
+.btn-logout i {
+  font-size: 1rem;
+}
+
+/* AVAILABILITY INDICATOR */
+.availability-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.availability-toggle {
+  display: none;
+  cursor: not-allowed;
+}
+
+.toggle-label {
+  display: flex;
+  pointer-events: none;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.availability-toggle:checked+.toggle-label {
+  color: #28a745;
+}
+
+.availability-toggle:unchecked+.toggle-label {
+  color: #dc3545;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.available {
+  background-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+.status-dot.unavailable {
+  background-color: #dc3545;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+}
+
+.status-text {
+  font-size: 0.85rem;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-navbar {
+    padding: 10px 15px;
+    height: auto;
+    flex-wrap: wrap;
+  }
+
+  .nav-left h4 {
+    font-size: 1.4rem;
+  }
+
+  .tagline {
+    display: none;
+  }
+
+  .nav-links {
+    gap: 12px;
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .nav-item {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
+  .nav-item i {
+    font-size: 0.9rem;
+  }
+
+  .btn-logout {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    gap: 8px;
+  }
+
+  .nav-item {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+
+  .nav-item i {
+    display: none;
+  }
+
+  .btn-logout {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+
+  .btn-logout i {
+    display: none;
+  }
+}

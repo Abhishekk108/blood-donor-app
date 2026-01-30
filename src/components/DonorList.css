@@ -1,0 +1,126 @@
+.map-container {
+  height: 400px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.body{
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+.find-donor{
+  width:40rem;
+  height: 60rem;
+}
+.donor-list{
+  width: 40rem;
+}
+/* Page background & center layout */
+.donor-list-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  padding: 20px 15px 40px;
+}
+
+
+/* Main white container */
+.donor-list-container {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Heading */
+.donor-list-container h3 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #c62828;
+  font-weight: 600;
+}
+
+/* Search controls */
+.donor-list-container select,
+.donor-list-container button {
+  width: 100%;
+}
+
+.donor-list-container button {
+  margin-top: 10px;
+}
+
+/* Map container */
+.map-container {
+  margin-top: 20px;
+  height: 400px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+/* Donor cards */
+.donor-card {
+  border: 1px solid #e0e0e0;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-weight: 500;
+  line-height: 2rem;
+  background: linear-gradient(90deg, #ffffff, #ff0a0ad7);
+  transition: 0.2s ease;
+}
+
+.donor-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+.copy-icon {
+  cursor: pointer;
+  color: #dc3545; /* bootstrap danger red */
+}
+
+.copy-icon:hover {
+  color: #a71d2a;
+  transform: scale(1.1);
+}
+.donor-card p {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+/* No donor text */
+.no-donor-text {
+  text-align: center;
+  color: #777;
+  margin-top: 20px;
+}
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-available {
+  background: #2e7d32;
+  color: white;
+}
+
+.badge-emergency {
+  background: #ff9800;
+  color: #000;
+}
+
+.badge-unavailable {
+  background: #9e9e9e;
+  color: white;
+}

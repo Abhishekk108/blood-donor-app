@@ -1,0 +1,404 @@
+.donor-page {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.donor-form-container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.donor-form-container h3 {
+  text-align: center;
+  color: #d32f2f;
+  margin-bottom: 10px;
+}
+
+.form-control,
+.form-select {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+}
+
+.map-text {
+  font-size: 14px;
+  color: #555;
+}
+
+.map-container {
+  width: 100%;
+  height: 300px;
+  border-radius: 4px !important;
+  overflow: hidden;
+  border: 2px solid #575353b3 !important;
+  
+  margin-bottom: 1rem;
+}
+.map-container:hover{
+  box-shadow: 0 4px 15px rgba(232, 8, 8, 0.4) !important;
+  transition: 0.2s;
+}
+.btn-danger {
+  background-color: #d32f2f;
+  font-weight: bold;
+  width: 8rem !important;
+}
+
+.btn-danger:hover {
+  background-color: #b71c1c;
+}
+
+
+/* Search bar container */
+.leaflet-control-geosearch {
+  width: 200px !important;
+}
+
+/* Input box */
+.leaflet-control-geosearch input {
+  height: 42px !important;
+  width: 100% !important;
+  background-color: #fff;
+  border-radius: 10px !important;
+  border: 2px solid #ffffff !important;
+  padding: 0 12px !important;
+  font-size: 14px !important;
+  color: black;
+}
+
+/* Search result dropdown */
+.leaflet-control-geosearch .results {
+  border-radius: 0px !important;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Each result item */
+/* Search bar wrapper */
+.leaflet-control-geosearch .geosearch-bar {
+  position: relative;
+}
+
+/* Give space inside input for X button */
+.leaflet-control-geosearch input {
+  padding-right: 20px !important;
+}
+
+/* Reset (X) button — INSIDE input */
+
+
+/* Custom X icon */
+.leaflet-control-geosearch .reset::after {
+  content: "";
+
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Hide default X text */
+.leaflet-control-geosearch .reset {
+  font-size: 0 !important;
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  border: none;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Add custom icon */
+.leaflet-control-geosearch .reset::after {
+  content: "";
+
+  background-size: 18px 18px;
+  color: black;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* SECTION DIVIDER */
+.section-divider {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.section-divider h5 {
+  color: #d32f2f;
+  margin: 0 0 3px 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.section-description {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+/* ELIGIBILITY GROUP - TWO COLUMN LAYOUT */
+.eligibility-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 15px;
+  margin-bottom: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 4px;
+  cursor: pointer;
+  accent-color: #d32f2f;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkbox-label span {
+  line-height: 1.4;
+}
+
+.ineligibility-warning {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 12px 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #856404;
+  margin-top: 10px;
+}
+
+.ineligibility-warning i {
+  font-size: 16px;
+}
+
+/* DONATION HISTORY */
+.donation-history {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+}
+
+.radio-label input[type="radio"] {
+  cursor: pointer;
+  accent-color: #d32f2f;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.radio-label input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* DATE INPUT GROUP */
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-left: 28px;
+  margin-top: 5px;
+}
+
+.date-input-group label {
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+}
+
+.date-input-group input[type="date"] {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.date-input-group input[type="date"]:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 4px rgba(211, 47, 47, 0.2);
+}
+
+/* AVAILABILITY GROUP */
+.availability-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* TRAVEL PREFERENCE */
+.travel-preference {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.travel-preference label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+}
+
+.travel-preference input[type="number"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.travel-preference input[type="number"]:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 4px rgba(211, 47, 47, 0.2);
+}
+
+/* CONSENT GROUP */
+.consent-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #f0f7ff;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border-left: 4px solid #d32f2f;
+  margin: 10px 0;
+}
+
+.checkbox-label-large {
+  font-size: 13px !important;
+  color: #333;
+}
+
+.checkbox-label-large span {
+  line-height: 1.4;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .donor-form-container {
+    max-width: 95%;
+    padding: 25px;
+  }
+
+  .eligibility-group {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .donor-form-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .eligibility-group {
+    grid-template-columns: 1fr;
+  }
+
+  .section-divider {
+    margin-top: 12px;
+    margin-bottom: 8px;
+  }
+
+  .date-input-group {
+    margin-left: 0;
+  }
+
+  .checkbox-label,
+  .radio-label {
+    font-size: 12px;
+  }
+
+  .ineligibility-warning {
+    font-size: 11px;
+  }
+
+  .map-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .donor-form-container {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .section-divider {
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+
+  .checkbox-label input[type="checkbox"],
+  .radio-label input[type="radio"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .map-container {
+    height: 200px;
+  }
+}
+
