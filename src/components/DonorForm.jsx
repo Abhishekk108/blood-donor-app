@@ -29,11 +29,10 @@ export default function DonorForm() {
 
   // Availability states
   const [availability, setAvailability] = useState("available_now");
-  const [availableUntil, setAvailableUntil] = useState("");
+  
   const navigate = useNavigate();
   
-  // Travel preference
-  const [maxDistance, setMaxDistance] = useState("");
+  // Travel preference (removed)
 
   // Consent
   const [consent, setConsent] = useState(false);
@@ -71,15 +70,40 @@ export default function DonorForm() {
     const newErrors = {};
     if (lat === null || lng === null) newErrors.location = "Select location on map";
     if (!consent) newErrors.consent = "You must consent to be contacted";
-    if (!maxDistance) newErrors.maxDistance = "Please specify maximum travel distance";
     if (hasDonatedBefore && !lastDonationDate) newErrors.lastDonationDate = "Please select last donation date";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Helper: return full days elapsed between given date string and today
+  const daysSince = (dateString) => {
+    const selected = new Date(dateString);
+    const today = new Date();
+    const utcSelected = Date.UTC(selected.getFullYear(), selected.getMonth(), selected.getDate());
+    const utcToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    return Math.floor((utcToday - utcSelected) / (1000 * 60 * 60 * 24));
+  };
+
   const submitDonor = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
+    // If user has donated before, ensure last donation was at least 90 days ago
+    if (hasDonatedBefore) {
+      const days = daysSince(lastDonationDate);
+      if (days < 90) {
+        const msg = "You are not eligible to donate blood again within 90 days of your last donation.";
+        toast.error(msg);
+        setErrors((prev) => ({ ...prev, lastDonationDate: msg }));
+        return; // do not proceed to Firestore writes
+      } else {
+        // clear lastDonationDate error if previously set
+        setErrors((prev) => {
+          const { lastDonationDate, ...rest } = prev;
+          return rest;
+        });
+      }
+    }
 
     try {
       setLoading(true);
@@ -91,7 +115,7 @@ export default function DonorForm() {
       }
 
       // Determine if user is available based on availability selection
-      const isAvailable = availability !== "not_available";
+      const isAvailable = availability === "available_now" || availability === "emergency_only";
 
       // Save donor eligibility and availability details to "donors" collection
       await addDoc(collection(db, "donors"), {
@@ -103,8 +127,6 @@ export default function DonorForm() {
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
         availability,
-        availableUntil: availability === "available_now" ? null : availableUntil,
-        maxDistance: Number(maxDistance),
         consent,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -116,8 +138,6 @@ export default function DonorForm() {
         lng: Number(lng),
         availability: isAvailable,
         availabilityStatus: availability,
-        availableUntil: availability === "available_now" ? null : availableUntil,
-        maxDistance: Number(maxDistance),
         eligibility,
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
@@ -136,8 +156,6 @@ export default function DonorForm() {
       setHasDonatedBefore(false);
       setLastDonationDate("");
       setAvailability("available_now");
-      setAvailableUntil("");
-      setMaxDistance("");
       setConsent(false);
       setErrors({});
       setTimeout(() => {
@@ -305,7 +323,6 @@ export default function DonorForm() {
                   checked={availability === "available_now"}
                   onChange={(e) => {
                     setAvailability(e.target.value);
-                    setAvailableUntil("");
                   }}
                   disabled={isTemporarilyIneligible()}
                 />
@@ -324,52 +341,12 @@ export default function DonorForm() {
                 <span>Available in emergency only</span>
               </label>
 
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="availability"
-                  value="not_available"
-                  checked={availability === "not_available"}
-                  onChange={(e) => setAvailability(e.target.value)}
-                />
-                <span>Not available</span>
-              </label>
+              {/* Removed 'Not available' option; only 'Available now' and 'Emergency only' remain */}
 
-              {availability === "available_now" && !isTemporarilyIneligible() && (
-                <div className="date-input-group">
-                  <label htmlFor="availableUntil">Available till (Optional)</label>
-                  <input
-                    id="availableUntil"
-                    type="date"
-                    value={availableUntil}
-                    onChange={(e) => setAvailableUntil(e.target.value)}
-                    className="form-control"
-                  />
-                </div>
-              )}
+              {/* Removed available-till date input */}
             </div>
 
-            {/* TRAVEL PREFERENCE SECTION */}
-            <div className="section-divider">
-              <h5>Travel Preference</h5>
-            </div>
-
-            <div className="travel-preference">
-              <label htmlFor="maxDistance">Maximum distance willing to travel (km)</label>
-              <input
-                id="maxDistance"
-                type="number"
-                min="0"
-                max="1000"
-                placeholder="e.g., 50"
-                value={maxDistance}
-                onChange={(e) => setMaxDistance(e.target.value)}
-                className="form-control"
-              />
-              {errors.maxDistance && (
-                <small className="text-danger">{errors.maxDistance}</small>
-              )}
-            </div>
+            {/* Travel preference removed */}
 
             
 

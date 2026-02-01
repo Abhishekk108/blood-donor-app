@@ -6,9 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import "./Home.css";
-import donateImg from "../assets/donate.jpg";
 import searchImg from "../assets/search.gif";
-import donationImg from "../assets/donation.png";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 export default function Home() {
   const navigate = useNavigate();
