@@ -268,19 +268,7 @@ export default function About() {
             </div>
           </section>
 
-          {/* Call to Action */}
-          <section className="about-section about-cta">
-            <h2>Ready to Save Lives?</h2>
-            <p>Join thousands of donors who are making a difference in their community.</p>
-            <div className="cta-buttons">
-              <a href="/donate" className="btn btn-danger btn-lg">
-                <i className="bi bi-heart-fill"></i> Become a Donor
-              </a>
-              <a href="/search" className="btn btn-outline-danger btn-lg">
-                <i className="bi bi-search"></i> Find Donors
-              </a>
-            </div>
-          </section>
+          
 
           {/* Footer Note */}
           <section className="about-footer">

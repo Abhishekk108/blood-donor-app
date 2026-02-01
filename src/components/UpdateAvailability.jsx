@@ -11,8 +11,6 @@ export default function UpdateAvailability() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [availability, setAvailability] = useState("available_now");
-  const [availableUntil, setAvailableUntil] = useState("");
-  const [maxDistance, setMaxDistance] = useState("");
   const [preferredTime, setPreferredTime] = useState("anytime");
   const [errors, setErrors] = useState({});
 
@@ -27,8 +25,6 @@ export default function UpdateAvailability() {
         if (userDoc.exists()) {
           const data = userDoc.data();
           setAvailability(data.availabilityStatus || "available_now");
-          setAvailableUntil(data.availableUntil || "");
-          setMaxDistance(data.maxDistance?.toString() || "");
           setPreferredTime(data.preferredTime || "anytime");
         }
       } catch (error) {
@@ -42,8 +38,8 @@ export default function UpdateAvailability() {
 
   const validate = () => {
     const newErrors = {};
-    if (!maxDistance) newErrors.maxDistance = "Maximum distance is required";
-    else if (isNaN(maxDistance) || maxDistance < 0) newErrors.maxDistance = "Please enter a valid distance";
+    setErrors({});
+    return true;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -65,8 +61,8 @@ export default function UpdateAvailability() {
       await updateDoc(doc(db, "donors", currentUser.uid), {
         availability: isAvailable,
         availabilityStatus: availability,
-        availableUntil: availability === "available_now" ? null : availableUntil,
-        maxDistance: Number(maxDistance),
+        // availableUntil removed
+        // maxDistance: Number(maxDistance),
         preferredTime,
         updatedAt: new Date().toISOString(),
       });
@@ -101,10 +97,7 @@ export default function UpdateAvailability() {
                     name="availability"
                     value="available_now"
                     checked={availability === "available_now"}
-                    onChange={(e) => {
-                      setAvailability(e.target.value);
-                      setAvailableUntil("");
-                    }}
+                    onChange={(e) => setAvailability(e.target.value)}
                   />
                   <span>Available now</span>
                 </label>
@@ -133,19 +126,7 @@ export default function UpdateAvailability() {
               </div>
             </div>
 
-            {/* Available Until */}
-            {availability === "available_now" && (
-              <div className="form-group">
-                <label htmlFor="availableUntil">Available till (Optional)</label>
-                <input
-                  id="availableUntil"
-                  type="date"
-                  value={availableUntil}
-                  onChange={(e) => setAvailableUntil(e.target.value)}
-                  className="form-control"
-                />
-              </div>
-            )}
+            {/* Available-till option removed */}
 
             {/* Form Buttons */}
             <div className="form-buttons">

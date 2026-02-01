@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { OpenStreetMapProvider, GeoSearchControl } from "leaflet-geosearch";
 import hospitalIconImg from "../assets/hospital.png";
 import pinImg from "../assets/pin.png";
-
+import { toast } from "react-toastify";
 // Icons
 const hospitalIcon = new L.Icon({
   iconUrl: hospitalIconImg,
@@ -69,6 +69,14 @@ function ClickPicker({ setSelectedPos }) {
 
   return null;
 }
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Phone number copied!");
+  } catch (err) {
+    toast.error("Copy failed");
+  }
+};
 
 // Auto-center map when donors change
 function MapUpdater({ donors, mapType }) {
@@ -168,6 +176,36 @@ export default function DonorMap({
                 📍 {d.city}
                 <br />
                 📞 {d.phone}
+                <button
+                  onClick={() => copyToClipboard(d.phone)}
+                  style={{
+                    marginLeft: "8px",
+                    padding: "2px 6px",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    background: "#ff000086",
+                  }}
+                >
+                  Copy
+                </button>
+                <br />
+                <a
+                  href={`https://www.google.com/maps?q=${d.lat},${d.lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "inline-block",
+                    marginTop: "6px",
+                    color: "#1a73e8",
+                    fontWeight: "500",
+                    textDecoration: "none",
+                  }}
+                >
+                  📍 Open in Google Maps
+                </a>
+
               </Popup>
             </Marker>
           ))}

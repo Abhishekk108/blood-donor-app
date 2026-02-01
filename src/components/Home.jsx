@@ -316,7 +316,6 @@ export default function Home() {
             <h6>Quick Links</h6>
             <ul>
               <li><Link to="/home">Home</Link></li>
-              <li><Link to="/donate">Donate</Link></li>
               <li><Link to="/search">Search</Link></li>
             </ul>
           </div>

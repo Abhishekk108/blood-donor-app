@@ -38,7 +38,6 @@ function App() {
       {/* ✅ Toast must be OUTSIDE Routes */}
       <ToastContainer position="top-right" autoClose={3000} />
 
-
       <Routes>
         {/* PUBLIC ROUTES */}
         <Route

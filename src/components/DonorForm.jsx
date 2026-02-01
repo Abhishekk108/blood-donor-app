@@ -13,15 +13,32 @@ export default function DonorForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Eligibility states
-  const [eligibility, setEligibility] = useState({
-    ageRange: false,
-    weight: false,
-    healthy: false,
-    donated3Months: false,
-    recentFever: false,
-    recentTattoo: false,
-  });
+  // Eligibility rules: each rule has a key, checked (passes), and a failure reason
+  const initialEligibilityRules = [
+    { key: "ageRange", checked: false, label: "Are you between 18 and 65 years old?", reason: "Age must be between 18 and 65" },
+    { key: "weight", checked: false, label: "Is your weight 50 kg or more?", reason: "Weight must be at least 50kg" },
+    { key: "healthy", checked: false, label: "Are you feeling healthy today?", reason: "You must be feeling healthy today" },
+    { key: "donated3Months", checked: false, label: "Have you NOT donated blood in the last 3 months?", reason: "You must wait 3 months between donations" },
+    { key: "recentFever", checked: false, label: "Have you NOT had fever, infection, or COVID in the last 14 days?", reason: "You must be free from fever/infection/COVID for 14 days" },
+    { key: "recentTattoo", checked: false, label: "Have you NOT had a tattoo or piercing in the last 6 months?", reason: "You must wait 6 months after tattoo/piercing" },
+  ];
+
+  const [eligibilityRules, setEligibilityRules] = useState(initialEligibilityRules);
+
+  // Derive legacy-shaped eligibility object for Firestore (keeps existing keys):
+  // note: donated3Months/recentFever/recentTattoo in the legacy schema represented the "bad" condition (true = failing),
+  // so we invert those three when producing the legacy object.
+  const dbEligibility = (() => {
+    const map = {};
+    eligibilityRules.forEach((r) => {
+      if (["donated3Months", "recentFever", "recentTattoo"].includes(r.key)) {
+        map[r.key] = !r.checked; // legacy: true means failing
+      } else {
+        map[r.key] = r.checked;
+      }
+    });
+    return map;
+  })();
 
   // Last donation states
   const [hasDonatedBefore, setHasDonatedBefore] = useState(false);
@@ -50,16 +67,9 @@ export default function DonorForm() {
     }
   }, []);
 
-  // Check if user is temporarily ineligible
+  // Check if user is temporarily ineligible (any rule failing)
   const isTemporarilyIneligible = () => {
-    return (
-      !eligibility.ageRange ||
-      !eligibility.weight ||
-      !eligibility.healthy ||
-      eligibility.donated3Months ||
-      eligibility.recentFever ||
-      eligibility.recentTattoo
-    );
+    return eligibilityRules.some((r) => !r.checked);
   };
 
   // Validation functions
@@ -123,7 +133,7 @@ export default function DonorForm() {
         lat: Number(lat),
         lng: Number(lng),
         email: currentUser.email || "",
-        eligibility,
+        eligibility: dbEligibility,
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
         availability,
@@ -138,21 +148,14 @@ export default function DonorForm() {
         lng: Number(lng),
         availability: isAvailable,
         availabilityStatus: availability,
-        eligibility,
+        eligibility: dbEligibility,
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
         updatedAt: serverTimestamp(),
       });
 
       toast.success("Donor registration updated successfully!");
-      setEligibility({
-        ageRange: false,
-        weight: false,
-        healthy: false,
-        donated3Months: false,
-        recentFever: false,
-        recentTattoo: false,
-      });
+      setEligibilityRules(initialEligibilityRules);
       setHasDonatedBefore(false);
       setLastDonationDate("");
       setAvailability("available_now");
@@ -186,76 +189,32 @@ export default function DonorForm() {
             </div>
 
             <div className="eligibility-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={eligibility.ageRange}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, ageRange: e.target.checked })
-                  }
-                />
-                <span>Are you between 18 and 65 years old?</span>
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={eligibility.weight}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, weight: e.target.checked })
-                  }
-                />
-                <span>Is your weight 50 kg or more?</span>
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={eligibility.healthy}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, healthy: e.target.checked })
-                  }
-                />
-                <span>Are you feeling healthy today?</span>
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={!eligibility.donated3Months}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, donated3Months: !e.target.checked })
-                  }
-                />
-                <span>Have you NOT donated blood in the last 3 months?</span>
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={!eligibility.recentFever}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, recentFever: !e.target.checked })
-                  }
-                />
-                <span>Have you NOT had fever, infection, or COVID in the last 14 days?</span>
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={!eligibility.recentTattoo}
-                  onChange={(e) =>
-                    setEligibility({ ...eligibility, recentTattoo: !e.target.checked })
-                  }
-                />
-                <span>Have you NOT had a tattoo or piercing in the last 6 months?</span>
-              </label>
+              {eligibilityRules.map((rule) => (
+                <label className="checkbox-label" key={rule.key}>
+                  <input
+                    type="checkbox"
+                    checked={rule.checked}
+                    onChange={(e) =>
+                      setEligibilityRules((prev) =>
+                        prev.map((r) => (r.key === rule.key ? { ...r, checked: e.target.checked } : r))
+                      )
+                    }
+                  />
+                  <span>{rule.label}</span>
+                </label>
+              ))}
 
               {isTemporarilyIneligible() && (
                 <div className="ineligibility-warning">
                   <i className="bi bi-exclamation-circle"></i>
                   <span>You are currently not eligible to donate. Please check back later.</span>
+                  <ul className="ineligibility-reasons">
+                    {eligibilityRules
+                      .filter((r) => !r.checked)
+                      .map((r) => (
+                        <li key={r.key}>{r.reason}</li>
+                      ))}
+                  </ul>
                 </div>
               )}
             </div>
