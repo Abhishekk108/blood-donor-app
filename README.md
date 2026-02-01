@@ -88,18 +88,18 @@ react-toastify
 
 📂 Project Structure
 src/
-│
 ├── components/
-│ ├── DonorForm.jsx
-│ ├── DonorMap.jsx
-│ ├── DonorList.jsx
-│ ├── UpdateAvailability.jsx
-│ └── Navbar.jsx
+│   ├── DonorForm.jsx        # Donor registration & eligibility logic
+│   ├── DonorMap.jsx         # Map view with donor markers
+│   ├── DonorList.jsx        # List of available donors
+│   ├── UpdateAvailability.jsx # Update donor availability
+│   └── Navbar.jsx           # Navigation bar
 │
-├── firebase.js # Firebase initialization
-├── App.jsx # App routes & layout
-├── main.jsx # App bootstrap
-└── App.css
+├── firebase.js              # Firebase initialization
+├── App.jsx                  # App routes & layout
+├── main.jsx                 # App bootstrap
+└── App.css                  # Global styles
+
 
 🚀 Getting Started (Local Setup)
 1️⃣ Clone the repository
