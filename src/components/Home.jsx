@@ -322,9 +322,9 @@ export default function Home() {
 
           <div className="footer-col">
             <h6>Contact</h6>
-            <p>📧 support@bloodconnect.app</p>
-            <p>📞 +91 9XXXXXXXXX</p>
-            <p>📍 India</p>
+            <p> support@bloodconnect.app</p>
+            <p>+91 9XXXXXXXXX</p>
+            <p> India</p>
           </div>
         </div>
 

@@ -13,32 +13,15 @@ export default function DonorForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Eligibility rules: each rule has a key, checked (passes), and a failure reason
-  const initialEligibilityRules = [
-    { key: "ageRange", checked: false, label: "Are you between 18 and 65 years old?", reason: "Age must be between 18 and 65" },
-    { key: "weight", checked: false, label: "Is your weight 50 kg or more?", reason: "Weight must be at least 50kg" },
-    { key: "healthy", checked: false, label: "Are you feeling healthy today?", reason: "You must be feeling healthy today" },
-    { key: "donated3Months", checked: false, label: "Have you NOT donated blood in the last 3 months?", reason: "You must wait 3 months between donations" },
-    { key: "recentFever", checked: false, label: "Have you NOT had fever, infection, or COVID in the last 14 days?", reason: "You must be free from fever/infection/COVID for 14 days" },
-    { key: "recentTattoo", checked: false, label: "Have you NOT had a tattoo or piercing in the last 6 months?", reason: "You must wait 6 months after tattoo/piercing" },
-  ];
-
-  const [eligibilityRules, setEligibilityRules] = useState(initialEligibilityRules);
-
-  // Derive legacy-shaped eligibility object for Firestore (keeps existing keys):
-  // note: donated3Months/recentFever/recentTattoo in the legacy schema represented the "bad" condition (true = failing),
-  // so we invert those three when producing the legacy object.
-  const dbEligibility = (() => {
-    const map = {};
-    eligibilityRules.forEach((r) => {
-      if (["donated3Months", "recentFever", "recentTattoo"].includes(r.key)) {
-        map[r.key] = !r.checked; // legacy: true means failing
-      } else {
-        map[r.key] = r.checked;
-      }
-    });
-    return map;
-  })();
+  // Eligibility states
+  const [eligibility, setEligibility] = useState({
+    ageRange: false,
+    weight: false,
+    healthy: false,
+    donated3Months: false,
+    recentFever: false,
+    recentTattoo: false,
+  });
 
   // Last donation states
   const [hasDonatedBefore, setHasDonatedBefore] = useState(false);
@@ -49,7 +32,7 @@ export default function DonorForm() {
   
   const navigate = useNavigate();
   
-  // Travel preference (removed)
+ 
 
   // Consent
   const [consent, setConsent] = useState(false);
@@ -67,9 +50,16 @@ export default function DonorForm() {
     }
   }, []);
 
-  // Check if user is temporarily ineligible (any rule failing)
+  // Check if user is temporarily ineligible
   const isTemporarilyIneligible = () => {
-    return eligibilityRules.some((r) => !r.checked);
+    return (
+      !eligibility.ageRange ||
+      !eligibility.weight ||
+      !eligibility.healthy ||
+      eligibility.donated3Months ||
+      eligibility.recentFever ||
+      eligibility.recentTattoo
+    );
   };
 
   // Validation functions
@@ -85,35 +75,9 @@ export default function DonorForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Helper: return full days elapsed between given date string and today
-  const daysSince = (dateString) => {
-    const selected = new Date(dateString);
-    const today = new Date();
-    const utcSelected = Date.UTC(selected.getFullYear(), selected.getMonth(), selected.getDate());
-    const utcToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-    return Math.floor((utcToday - utcSelected) / (1000 * 60 * 60 * 24));
-  };
-
   const submitDonor = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
-    // If user has donated before, ensure last donation was at least 90 days ago
-    if (hasDonatedBefore) {
-      const days = daysSince(lastDonationDate);
-      if (days < 90) {
-        const msg = "You are not eligible to donate blood again within 90 days of your last donation.";
-        toast.error(msg);
-        setErrors((prev) => ({ ...prev, lastDonationDate: msg }));
-        return; // do not proceed to Firestore writes
-      } else {
-        // clear lastDonationDate error if previously set
-        setErrors((prev) => {
-          const { lastDonationDate, ...rest } = prev;
-          return rest;
-        });
-      }
-    }
 
     try {
       setLoading(true);
@@ -125,7 +89,7 @@ export default function DonorForm() {
       }
 
       // Determine if user is available based on availability selection
-      const isAvailable = availability === "available_now" || availability === "emergency_only";
+      const isAvailable = availability !== "not_available";
 
       // Save donor eligibility and availability details to "donors" collection
       await addDoc(collection(db, "donors"), {
@@ -133,7 +97,7 @@ export default function DonorForm() {
         lat: Number(lat),
         lng: Number(lng),
         email: currentUser.email || "",
-        eligibility: dbEligibility,
+        eligibility,
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
         availability,
@@ -148,14 +112,21 @@ export default function DonorForm() {
         lng: Number(lng),
         availability: isAvailable,
         availabilityStatus: availability,
-        eligibility: dbEligibility,
+        eligibility,
         hasDonatedBefore,
         lastDonationDate: hasDonatedBefore ? lastDonationDate : null,
         updatedAt: serverTimestamp(),
       });
 
       toast.success("Donor registration updated successfully!");
-      setEligibilityRules(initialEligibilityRules);
+      setEligibility({
+        ageRange: false,
+        weight: false,
+        healthy: false,
+        donated3Months: false,
+        recentFever: false,
+        recentTattoo: false,
+      });
       setHasDonatedBefore(false);
       setLastDonationDate("");
       setAvailability("available_now");
@@ -189,32 +160,76 @@ export default function DonorForm() {
             </div>
 
             <div className="eligibility-group">
-              {eligibilityRules.map((rule) => (
-                <label className="checkbox-label" key={rule.key}>
-                  <input
-                    type="checkbox"
-                    checked={rule.checked}
-                    onChange={(e) =>
-                      setEligibilityRules((prev) =>
-                        prev.map((r) => (r.key === rule.key ? { ...r, checked: e.target.checked } : r))
-                      )
-                    }
-                  />
-                  <span>{rule.label}</span>
-                </label>
-              ))}
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={eligibility.ageRange}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, ageRange: e.target.checked })
+                  }
+                />
+                <span>Are you between 18 and 65 years old?</span>
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={eligibility.weight}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, weight: e.target.checked })
+                  }
+                />
+                <span>Is your weight 50 kg or more?</span>
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={eligibility.healthy}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, healthy: e.target.checked })
+                  }
+                />
+                <span>Are you feeling healthy today?</span>
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={!eligibility.donated3Months}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, donated3Months: !e.target.checked })
+                  }
+                />
+                <span>Have you NOT donated blood in the last 3 months?</span>
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={!eligibility.recentFever}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, recentFever: !e.target.checked })
+                  }
+                />
+                <span>Have you NOT had fever, infection, or COVID in the last 14 days?</span>
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={!eligibility.recentTattoo}
+                  onChange={(e) =>
+                    setEligibility({ ...eligibility, recentTattoo: !e.target.checked })
+                  }
+                />
+                <span>Have you NOT had a tattoo or piercing in the last 6 months?</span>
+              </label>
 
               {isTemporarilyIneligible() && (
                 <div className="ineligibility-warning">
                   <i className="bi bi-exclamation-circle"></i>
                   <span>You are currently not eligible to donate. Please check back later.</span>
-                  <ul className="ineligibility-reasons">
-                    {eligibilityRules
-                      .filter((r) => !r.checked)
-                      .map((r) => (
-                        <li key={r.key}>{r.reason}</li>
-                      ))}
-                  </ul>
                 </div>
               )}
             </div>
@@ -300,15 +315,21 @@ export default function DonorForm() {
                 <span>Available in emergency only</span>
               </label>
 
-              {/* Removed 'Not available' option; only 'Available now' and 'Emergency only' remain */}
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="availability"
+                  value="not_available"
+                  checked={availability === "not_available"}
+                  onChange={(e) => setAvailability(e.target.value)}
+                />
+                <span>Not available</span>
+              </label>
 
-              {/* Removed available-till date input */}
+              
             </div>
 
-            {/* Travel preference removed */}
-
             
-
             {/* LOCATION SECTION */}
             <div className="section-divider">
               <h5>Your Location</h5>

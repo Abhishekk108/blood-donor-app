@@ -1,3 +1,5 @@
+
+
 .donor-page {
   display: flex;
   width: 100%;
@@ -81,6 +83,8 @@
   height: 42px !important;
   width: 100% !important;
   background-color: #fff;
+  max-width: 100%;
+  box-sizing: border-box;
   border-radius: 10px !important;
   border: 2px solid #ffffff !important;
   padding: 0 12px !important;
