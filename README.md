@@ -4,6 +4,8 @@ A web-based blood donor management system that helps users register as donors, m
 
 🔗 Live Demo:
 https://blood-donor-app-psi.vercel.app/
+> ⚠️ Note: This project is currently optimized for desktop viewing. Mobile responsiveness is a work in progress.
+
 
 📌 Overview
 
